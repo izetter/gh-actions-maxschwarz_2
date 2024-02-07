@@ -12,15 +12,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.11.0
-
-
+      # See NOTE 3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+        
 
 
 # NOTE 1
 # We need to get the code from the repo, because rememeber that all of this CI/CD stuff runs on a VM (the runner),
 # an ubuntu VM in this case, and that VM of course does not have the code,
 # so we need to provide the machine with the project code.
-
 
 
 # NOTE 2
@@ -31,3 +34,13 @@ jobs:
 # Remember that the goal of this workflow is to, on every push to the remote repo
 # execute the -unit- tests that the devs created. We are automating that testing and ensuring it is tested on every push (CI).
 # And because in this case this is a React app -which uses node-, we need to have/use Node on the runner...
+
+
+# NOTE 3
+# Now that we have Node installed (we already had it, the runner comes with it remember, but you know what I mean)
+# we can use it, and npm as well.
+
+# npm ci because "npm ci performs a clean install of all existing dependencies (uses package-lock.json),
+# whereas npm install attempts to update current dependencies when possible."
+# That means that when using CI, we are ensuring to use the same exact dependency versions
+# used during development.
