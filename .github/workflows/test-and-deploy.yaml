@@ -17,7 +17,27 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
-        
+  # See NOTE 4
+  deploy:
+    # See NOTE 5
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.0
+      - name: Install dependencies
+        run: npm ci
+      - name: build
+        run: npm run build
+      # See NOTE 6
+      - name: Deploy
+        run: echo "Deployed... (mock)"
+
+
 
 
 # NOTE 1
@@ -29,7 +49,6 @@ jobs:
 # NOTE 2
 # The ubuntu runner comes with node preinstalled (https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md)
 # but we're installing it anyway just to show how it would be done, we also picked a more recent node version just for fun.
-
 # Why we need to use Node anyway, you ask?
 # Remember that the goal of this workflow is to, on every push to the remote repo
 # execute the -unit- tests that the devs created. We are automating that testing and ensuring it is tested on every push (CI).
@@ -39,8 +58,25 @@ jobs:
 # NOTE 3
 # Now that we have Node installed (we already had it, the runner comes with it remember, but you know what I mean)
 # we can use it, and npm as well.
-
 # npm ci because "npm ci performs a clean install of all existing dependencies (uses package-lock.json),
 # whereas npm install attempts to update current dependencies when possible."
 # That means that when using CI, we are ensuring to use the same exact dependency versions
 # used during development.
+
+
+# NOTE 4
+# Since each job is completely independent to one another, we have to "repeat" some steps to get the code,
+# intall node, dependencies etc.
+# Since this is a deploy step (CD), we need to build the app, it being a Vite React app, we use npm run build.
+
+
+# NOTE 5
+# This indicartes the the "deploy" job will not start until the "test" job is finished successfully;
+# successfully means that no tests fail. But I'd wager that any type of errors on scripts or anywhere
+# on the job could also mean that the job was not finished successfully. 
+
+
+# NOTE 6
+# This step is just a mock of an actual deployment step, where you would take the build of the previous step
+# and upload it to some hosting provider that serves the website (AWS I guess could be?) 
+# So this mock just echos a message to say that the build has been deployed.
