@@ -1,6 +1,7 @@
 name: Test Project
-on: push
-jobs: 
+# See NOTE 0
+on: [push, workflow_dispatch]
+jobs:
   test:
     runs-on: ubuntu-latest
     steps:
@@ -38,6 +39,11 @@ jobs:
         run: echo "Deployed... (mock)"
 
 
+        
+
+# NOTE 0
+# This workflow will be triggered on a push event, or manually eith the button on GitHub,
+# because of the workflow_dispatch
 
 
 # NOTE 1
